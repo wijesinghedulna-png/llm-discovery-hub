@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Index Discovery Engine & Tracker</title>
+    <style>
+        :root { --primary: #2c3e50; --accent: #1abc9c; --bg: #f8f9fa; --card-bg: #ffffff; --text: #34495e; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; background: var(--bg); color: var(--text); line-height: 1.6; }
+        .navbar { background: var(--primary); color: white; padding: 20px; text-align: center; font-weight: bold; font-size: 1.4rem; letter-spacing: 0.5px; }
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .intro-text { text-align: center; color: #7f8c8d; margin-bottom: 40px; font-size: 1.1rem; }
+        .directory-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .card { background: var(--card-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 24px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.06); border-color: var(--accent); }
+        .card-title { margin: 0 0 10px 0; color: var(--primary); font-size: 1.35rem; font-weight: 700; }
+        .tag { display: inline-block; background: #e6fffa; color: #16a085; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .metric-badge { font-family: monospace; background: #f1f3f5; color: #495057; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; }
+        .hidden { display: none; }
+        .back-btn { display: inline-block; margin-bottom: 24px; color: var(--accent); text-decoration: none; font-weight: 700; font-size: 1rem; }
+        .detail-view { background: var(--card-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .detail-title { color: var(--primary); font-size: 2rem; margin-top: 0; margin-bottom: 10px; }
+        .action-btn { display: inline-block; background: var(--accent); color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 700; margin-top: 25px; transition: background 0.2s; text-align: center; }
+        .action-btn:hover { background: #16a085; }
+        .meta-box { background: #f8f9fa; border-left: 4px solid var(--primary); padding: 20px; margin: 25px 0; border-radius: 0 6px 6px 0; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">LLM MODEL HUB SANDBOX</div>
+
+    <div class="container">
+        <!-- DIRECTORY INDEX VIEW -->
+        <div id="view-directory">
+            <p class="intro-text">An open analytics registry tracking structural parameters, core capabilities, and accessibility channels of generative AI engines.</p>
+            <div id="directory-list" class="directory-grid"></div>
+        </div>
+
+        <!-- INDIVIDUAL MODEL DETAIL VIEW -->
+        <div id="view-item" class="hidden">
+            <a href="#" class="back-btn" onclick="showDirectory(event)">&larr; Return to Main Registry Index</a>
+            <div class="detail-view">
+                <span id="item-category" class="tag"></span>
+                <h1 id="item-title" class="detail-title"></h1>
+                <div id="item-content" style="font-size: 1.1rem; color: #4a5568; line-height: 1.8; margin: 24px 0;"></div>
+                
+                <div class="meta-box">
+                    <strong>Structural Model Specifications:</strong><br>
+                    <span id="item-metric" class="metric-badge" style="display:inline-block; margin-top:8px;"></span>
+                </div>
+
+                <a href="#" id="item-action-url" target="_blank" class="action-btn">Access Core Project Environment &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // STEP 4 WARNING: PASTE YOUR GOOGLE SHEET CSV URL BETWEEN THE SINGLE QUOTES BELOW
+        const SHEET_CSV_URL = 'PASTE_YOUR_PUBLISHED_CSV_URL_HERE';
+
+        let dataRecords = [];
+
+        async function initEngine() {
+            if(SHEET_CSV_URL.includes('PASTE_YOUR')) {
+                document.getElementById('directory-list').innerHTML = '<p style="color:red; text-align:center;">Configuration Error: Please paste your specific Google Sheet CSV URL into the source code template framework.</p>';
+                return;
+            }
+            try {
+                const response = await fetch(SHEET_CSV_URL);
+                const csvText = await response.text();
+                dataRecords = parseCSV(csvText);
+                
+                const params = new URLSearchParams(window.location.search);
+                const activeSlug = params.get('model');
+                
+                if (activeSlug) {
+                    renderItemPage(activeSlug);
+                } else {
+                    renderDirectoryView(dataRecords);
+                }
+            } catch (error) {
+                console.error('System failed to process structural spreadsheet payload:', error);
+            }
+        }
+
+        function parseCSV(text) {
+            const lines = text.split('\n');
+            if (lines.length === 0) return [];
+            const headers = lines[0].split(',').map(h => h.trim().replace(/[\r\n]/g, ""));
+            const items = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const matches = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',');
+                const cols = matches.map(c => c.trim().replace(/^"|"$/g, "").replace(/[\r\n]/g, ""));
+                
+                const obj = {};
+                headers.forEach((header, index) => { obj[header] = cols[index] || ""; });
+                items.push(obj);
+            }
+            return items;
+        }
+
+        function renderDirectoryView(records) {
+            document.getElementById('view-directory').classList.remove('hidden');
+            document.getElementById('view-item').classList.add('hidden');
+            const container = document.getElementById('directory-list');
+            container.innerHTML = '';
+            
+            records.forEach(item => {
+                if(!item.title || !item.slug) return;
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <span class="tag">${item.category}</span>
+                    <h3 class="card-title">${item.title}</h3>
+                    <span class="metric-badge">${item.metric}</span>
+                    <p style="margin:14px 0 0 0; color:#7f8c8d; font-size:0.95rem;">${item.description.substring(0, 140)}...</p>
+                `;
+                card.onclick = () => {
+                    window.history.pushState({}, '', '?model=' + item.slug);
+                    renderItemPage(item.slug);
+                };
+                container.appendChild(card);
+            });
+            // HOME PAGE METADATA CONFIGURATION
+            document.title = "LLM Discovery Registry Engine | Open Source Model Tracker";
+        }
+
+        function renderItemPage(slug) {
+            const item = dataRecords.find(r => r.slug === slug);
+            if (!item) { clearToDirectory(); return; }
+            document.getElementById('view-directory').classList.add('hidden');
+            document.getElementById('view-item').classList.remove('hidden');
+            
+            document.getElementById('item-title').innerText = item.title;
+            document.getElementById('item-category').innerText = item.category;
+            document.getElementById('item-content').innerText = item.description;
+            document.getElementById('item-metric').innerText = item.metric;
+            
+            const actionBtn = document.getElementById('item-action-url');
+            actionBtn.href = item.target_url || "#";
+            
+            // CODE-LEVEL KEYWORD EDITING POINT:
+            document.title = `${item.title} Technical Metrics, Specs & Context Window Discovery Hub`;
+            
+            injectStructuredDataEntity(item);
+        }
+
+        function injectStructuredDataEntity(item) {
+            const schemaObj = {
+                "@context": "https://schema.org",
+                "@type": "TechArticle",
+                "headline": item.title + " Technical Capabilities & Deployment Blueprint",
+                "description": item.description,
+                "category": item.category,
+                "dependencies": item.metric,
+                "url": window.location.href
+            };
+            let scriptTag = document.getElementById('dynamicSchemaLayout');
+            if (!scriptTag) {
+                scriptTag = document.createElement('script');
+                scriptTag.id = 'dynamicSchemaLayout';
+                scriptTag.type = 'application/ld+json';
+                document.head.appendChild(scriptTag);
+            }
+            scriptTag.text = JSON.stringify(schemaObj);
+        }
+
+        function showDirectory(e) {
+            e.preventDefault();
+            window.history.pushState({}, '', window.location.pathname);
+            renderDirectoryView(dataRecords);
+        }
+
+        function clearToDirectory() {
+            window.history.pushState({}, '', window.location.pathname);
+            renderDirectoryView(dataRecords);
+        }
+
+        window.addEventListener('popstate', () => {
+            const params = new URLSearchParams(window.location.search);
+            const activeSlug = params.get('model');
+            if (activeSlug) renderItemPage(activeSlug);
+            else renderDirectoryView(dataRecords);
+        });
+
+        initEngine();
+    </script>
+</body>
+</html>
