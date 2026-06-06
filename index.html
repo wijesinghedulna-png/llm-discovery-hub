@@ -83,24 +83,53 @@
             }
         }
 
-        function parseCSV(text) {
-            const lines = text.split('\n');
-            if (lines.length === 0) return [];
-            const headers = lines[0].split(',').map(h => h.trim().replace(/[\r\n]/g, ""));
-            const items = [];
-            
-            for (let i = 1; i < lines.length; i++) {
-                if (!lines[i].trim()) continue;
-                const matches = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',');
-                const cols = matches.map(c => c.trim().replace(/^"|"$/g, "").replace(/[\r\n]/g, ""));
-                
-                const obj = {};
-                headers.forEach((header, index) => { obj[header] = cols[index] || ""; });
-                items.push(obj);
-            }
-            return items;
-        }
+function parseCSV(text) {
+    const lines = text.split(/\r?\n/);
+    if (lines.length === 0 || !lines[0].trim()) return [];
+    
+    // Clean up headers and handle potential quote wrappers around header titles
+    const headers = [];
+    let headerLine = lines[0];
+    let headerMatches = headerLine.match(/(".*?"|[^",\n\r]+)(?=\s*,|\s*$)/g) || headerLine.split(',');
+    headerMatches.forEach(h => {
+        headers.push(h.trim().replace(/^"|"$/g, "").trim());
+    });
 
+    const items = [];
+    
+    // Loop through each row of data
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        
+        const rowValues = [];
+        let insideQuotes = false;
+        let currentValue = '';
+        
+        // Character-by-character tracking loops to prevent string breakdowns
+        for (let j = 0; j < line.length; j++) {
+            const char = line[j];
+            
+            if (char === '"') {
+                insideQuotes = !insideQuotes; // Toggle quote state
+            } else if (char === ',' && !insideQuotes) {
+                rowValues.push(currentValue.trim().replace(/^"|"$/g, ""));
+                currentValue = ''; // Reset column container
+            } else {
+                currentValue += char;
+            }
+        }
+        rowValues.push(currentValue.trim().replace(/^"|"$/g, "")); // Push last column
+        
+        // Map column entries directly to header keys safely
+        const obj = {};
+        headers.forEach((header, index) => {
+            obj[header] = rowValues[index] !== undefined ? rowValues[index] : "";
+        });
+        items.push(obj);
+    }
+    return items;
+}
         function renderDirectoryView(records) {
             document.getElementById('view-directory').classList.remove('hidden');
             document.getElementById('view-item').classList.add('hidden');
