@@ -1,0 +1,11 @@
+https://steady-druid-9d25de.netlify.app/
+https://steady-druid-9d25de.netlify.app/?model=llama-3-8b-instruct-specs
+https://steady-druid-9d25de.netlify.app/?model=mistral-7b-v03-weights
+https://steady-druid-9d25de.netlify.app/?model=microsoft-phi-3-mini-benchmarks
+https://steady-druid-9d25de.netlify.app/?model=openai-gpt-4o-multimodal-api
+https://steady-druid-9d25de.netlify.app/?model=claude-3-5-sonnet-coding-specs
+https://steady-druid-9d25de.netlify.app/?model=deepseek-v3-open-matrix
+https://steady-druid-9d25de.netlify.app/?model=qwen-2-5-72b-instruct
+https://steady-druid-9d25de.netlify.app/?model=gemma-2-27b-developer-specs
+https://steady-druid-9d25de.netlify.app/?model=cohere-command-r-plus-api
+https://steady-druid-9d25de.netlify.app/?model=grok-2-beta-realtime-api
