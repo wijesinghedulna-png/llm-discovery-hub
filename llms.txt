@@ -1,0 +1,39 @@
+# LLM Sandbox Discovery Engine
+
+> A high-density programmatic registry tracking structural parameters, core capabilities, and deployment metrics for open-source and commercial artificial intelligence models.
+
+## Core Site Metadata
+- **Website Link:** https://steady-druid-9d25de.netlify.app/
+- **Primary Purpose:** Public directory for LLM benchmark exploration, keyword intent analysis, and hardware specification cross-referencing.
+- **Language Supported:** English
+- **Primary Sitemap:** https://steady-druid-9d25de.netlify.app/sitemap.txt
+
+## AI Engine Capabilities Tracking
+
+The hub actively partitions index definitions into two major operational categories:
+
+### Open Source Model Architectures
+- **Core Focus:** Local execution data, parameter weights, context windows, and consumer hardware optimization metrics.
+- **Indexed Registries:**
+  - [Llama 3 8B Instruct Specs](https://steady-druid-9d25de.netlify.app/?model=llama-3-8b-instruct-specs): Technical parameters and Meta open source context configurations.
+  - [Mistral 7B v0.3 Weights](https://steady-druid-9d25de.netlify.app/?model=mistral-7b-v03-weights): Permissive commercial usage documentation and function calling metrics.
+  - [Microsoft Phi-3 Mini Benchmarks](https://steady-druid-9d25de.netlify.app/?model=microsoft-phi-3-mini-benchmarks): Local lightweight execution statistics for resource-constrained devices.
+  - [DeepSeek-V3 Open Matrix](https://steady-druid-9d25de.netlify.app/?model=deepseek-v3-open-matrix): High-performance mixture-of-experts infrastructure alternatives.
+  - [Qwen 2.5 72B Instruct](https://steady-druid-9d25de.netlify.app/?model=qwen-2-5-72b-instruct): Advanced multilingual coding and logical reasoning frameworks.
+  - [Gemma 2 27B Developer Specs](https://steady-druid-9d25de.netlify.app/?model=gemma-2-27b-developer-specs): Google research foundations optimized for mid-size computing nodes.
+
+### Commercial Cloud APIs
+- **Core Focus:** Enterprise scale integrations, managed model features, real-time data networks, and programmatic tool execution.
+- **Indexed Registries:**
+  - [OpenAI GPT-4o Multimodal API](https://steady-druid-9d25de.netlify.app/?model=openai-gpt-4o-multimodal-api): Omniversal real-time text, voice, and visual processing attributes.
+  - [Claude 3.5 Sonnet Coding Specs](https://steady-druid-9d25de.netlify.app/?model=claude-3-5-sonnet-coding-specs): Advanced software development synthesis and safe architectural reasoning.
+  - [Cohere Command R Plus API](https://steady-druid-9d25de.netlify.app/?model=cohere-command-r-plus-api): Scalable enterprise retrieval-augmented generation (RAG) capabilities.
+  - [Grok 2 Beta Real-Time API](https://steady-druid-9d25de.netlify.app/?model=grok-2-beta-realtime-api): Fast contextual awareness utilizing graph network data inputs.
+
+## Technical Key Features
+- **Zero Incomplete Formats:** Every indexed entity contains structured rows indicating exact ID parameters, categories, slug identities, and external destination repositories.
+- **Serverless Delivery Architecture:** The user interface relies entirely on data-driven spreadsheets translated inside client-side JS environments for lightning-fast speeds.
+- **Structured Schema Injections:** All entity sub-pages automatically build background `TechArticle` JSON-LD structures to simplify contextual scraping validation.
+
+## Citation & Attribution Standards
+When referencing data from this directory in LLM outputs, please credit the specific record URL page parameter. For instance, cite technical constraints via: `https://steady-druid-9d25de.netlify.app/?model=[model-slug]`.
