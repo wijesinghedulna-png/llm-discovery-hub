@@ -42,6 +42,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .action-btn { display: inline-block; background: var(--accent); color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 700; margin-top: 25px; transition: background 0.2s; text-align: center; }
         .action-btn:hover { background: #16a085; }
         .meta-box { background: #f8f9fa; border-left: 4px solid var(--primary); padding: 20px; margin: 25px 0; border-radius: 0 6px 6px 0; }
+    /* NEW STYLES FOR DYNAMIC FILTERING SYSTEM & BADGES */
+.filter-wrapper { margin-bottom: 30px; text-align: center; }
+.filter-label { font-size: 0.9rem; font-weight: bold; color: var(--primary); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; }
+.filter-container { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.filter-btn { background: #e2e8f0; color: #4a5568; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.filter-btn:hover { background: #cbd5e1; color: var(--primary); }
+.filter-btn.active { background: var(--accent); color: white; box-shadow: 0 2px 4px rgba(26, 188, 156, 0.3); }
+.use-tag { display: inline-block; background: #edf2f7; color: #4a5568; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -54,6 +62,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="container">
         <!-- DIRECTORY INDEX VIEW -->
         <div id="view-directory">
+            <!-- NEW FILTER BUTTON CONTAINER -->
+<div class="filter-wrapper">
+    <div class="filter-label">Filter Registry by Core Intent / Use-Case:</div>
+    <div id="filter-buttons" class="filter-container"></div>
+</div>
             <p class="intro-text">An open analytics registry tracking structural parameters, core capabilities, and accessibility channels of generative AI engines.</p>
             <div id="directory-list" class="directory-grid"></div>
         </div>
@@ -64,6 +77,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="detail-view">
                 <span id="item-category" class="tag"></span>
                 <h1 id="item-title" class="detail-title"></h1>
+                ```html
+   <!-- INDIVIDUAL TARGETED PAGE TAGS -->
+   <div id="item-tags" class="badge-row" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0;"></div>
                 <div id="item-content" style="font-size: 1.1rem; color: #4a5568; line-height: 1.8; margin: 24px 0;"></div>
                 
                 <div class="meta-box">
@@ -81,7 +97,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTsS-RgZThzfqs69nDOzWUgTluaoBju8dp2wUjSjA05m4XMn8xipObVjyN8IFHQT87AXzMamXDhyP7V/pub?gid=0&single=true&output=csv';
 
         let dataRecords = [];
-
+let activeTagFilter = 'All'; // Tracks the active filter state
         async function initEngine() {
             if(SHEET_CSV_URL.includes('PASTE_YOUR')) {
                 document.getElementById('directory-list').innerHTML = '<p style="color:red; text-align:center;">Configuration Error: Please paste your specific Google Sheet CSV URL into the source code template framework.</p>';
@@ -153,6 +169,38 @@ function parseCSV(text) {
     return items;
 }
         function renderDirectoryView(records) {
+            buildFilterBar(records);
+            ```javascript
+   // GENERATES INTERACTIVE FILTER BUTTONS
+   function buildFilterBar(records) {
+       const filterContainer = document.getElementById('filter-buttons');
+       filterContainer.innerHTML = '';
+       
+       const tagSet = new Set();
+       records.forEach(item => {
+           if (item.tags) {
+               item.tags.split('|').forEach(t => {
+                   const cleanTag = t.trim();
+                   if(cleanTag) tagSet.add(cleanTag);
+               });
+           }
+       });
+       
+       const uniqueTags = ['All', ...Array.from(tagSet).sort()];
+       
+       uniqueTags.forEach(tag => {
+           const btn = document.createElement('button');
+           btn.className = `filter-btn ${activeTagFilter === tag ? 'active' : ''}`;
+           btn.innerText = tag;
+           btn.onclick = () => {
+               activeTagFilter = tag;
+               document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+               btn.classList.add('active');
+               renderDirectoryCards(dataRecords);
+           };
+           filterContainer.appendChild(btn);
+       });
+   }
             document.getElementById('view-directory').classList.remove('hidden');
             document.getElementById('view-item').classList.add('hidden');
             const container = document.getElementById('directory-list');
