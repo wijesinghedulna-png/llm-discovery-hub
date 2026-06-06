@@ -1,0 +1,6 @@
+# Allow all search engine bots and AI crawlers to fully index the sandbox
+User-agent: *
+Allow: /
+
+# Direct link to your sitemap roadmap
+Sitemap: https://steady-druid-9d25de.netlify.app/sitemap.txt
