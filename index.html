@@ -196,19 +196,19 @@ function parseCSV(text) {
             renderDirectoryView(dataRecords); // Re-run directory view to update screen instantly!
         }
 
-        function renderDirectoryView(records) {
-            buildFilterBar(records);
+function renderDirectoryView(records) {
+            // Only build the dropdown filter choices once on initial system startup
+            if (document.getElementById('tag-suggestions').children.length === 0) {
+                buildFilterBar(records);
+            }
             
             document.getElementById('view-directory').classList.remove('hidden');
             document.getElementById('view-item').classList.add('hidden');
-            const container = document.getElementById('directory-list');
-            container.innerHTML = '';
-            document.getElementById('view-directory').classList.remove('hidden');
-            document.getElementById('view-item').classList.add('hidden');
+            
             const container = document.getElementById('directory-list');
             container.innerHTML = '';
             
-// Filter records dynamically based on active filter state
+            // Filter records dynamically based on active filter state
             const filteredRecords = records.filter(item => {
                 if (activeTagFilter === 'All') return true;
                 if (!item.tags) return false;
@@ -246,6 +246,7 @@ function parseCSV(text) {
                 };
                 container.appendChild(card);
             });
+            
             // HOME PAGE METADATA CONFIGURATION
             document.title = "LLM Discovery Registry Engine | Open Source Model Tracker";
         }
